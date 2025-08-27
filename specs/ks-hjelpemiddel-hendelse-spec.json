@@ -1,0 +1,161 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Hendelser API",
+    "version": "1.0.5"
+  },
+  "paths": {
+    "/hendelser": {
+      "get": {
+        "summary": "Get hendelser from a given datetime",
+        "operationId": "GetHendelser",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "description": "Start datetime to fetch hendelser from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of hendelser",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      { "$ref": "#/components/schemas/HjelpeMiddelPaBil" },
+                      { "$ref": "#/components/schemas/HjelpemiddelAnkommetLager" },
+                      { "$ref": "#/components/schemas/HjelpemiddelPlanlagtUtlevert" },
+                      { "$ref": "#/components/schemas/HjelpemiddelUtlevert" }
+                    ],
+                    "discriminator": {
+                      "propertyName": "eventType",
+                      "mapping": {
+                        "HjelpeMiddelPaBil": "#/components/schemas/HjelpeMiddelPaBil",
+                        "HjelpemiddelAnkommetLager": "#/components/schemas/HjelpemiddelAnkommetLager",
+                        "HjelpemiddelPlanlagtUtlevert": "#/components/schemas/HjelpemiddelPlanlagtUtlevert",
+                        "HjelpemiddelUtlevert": "#/components/schemas/HjelpemiddelUtlevert"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "EventType": {
+        "type": "string",
+        "enum": [
+          "HjelpeMiddelPaBil",
+          "HjelpemiddelAnkommetLager",
+          "HjelpemiddelPlanlagtUtlevert",
+          "HjelpemiddelUtlevert"
+        ],
+        "description": "The type of hendelse event"
+      },
+      "BaseEvent": {
+        "type": "object",
+        "required": [
+          "occuredOn",
+          "soknadId",
+          "kommunenr",
+          "eventType"
+        ],
+        "properties": {
+          "occuredOn": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the event occurred"
+          },
+          "soknadId": {
+            "type": "string",
+            "description": "Søknad ID"
+          },
+          "kommunenr": {
+            "type": "string",
+            "description": "Kommunenummer"
+          },
+          "eventType": {
+            "$ref": "#/components/schemas/EventType"
+          }
+        }
+      },
+      "HjelpeMiddelPaBil": {
+        "allOf": [
+          { "$ref": "#/components/schemas/BaseEvent" },
+          {
+            "type": "object",
+            "properties": {
+              "eventType": { "$ref": "#/components/schemas/EventType" },
+              "sent": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the hjelpemiddel was sent with car"
+              }
+            }
+          }
+        ]
+      },
+      "HjelpemiddelAnkommetLager": {
+        "allOf": [
+          { "$ref": "#/components/schemas/BaseEvent" },
+          {
+            "type": "object",
+            "properties": {
+              "eventType": { "$ref": "#/components/schemas/EventType" },
+              "arrived": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the hjelpemiddel arrived at warehouse"
+              }
+            }
+          }
+        ]
+      },
+      "HjelpemiddelPlanlagtUtlevert": {
+        "allOf": [
+          { "$ref": "#/components/schemas/BaseEvent" },
+          {
+            "type": "object",
+            "properties": {
+              "eventType": { "$ref": "#/components/schemas/EventType" },
+              "day": {
+                "type": "string",
+                "format": "date",
+                "description": "Planned delivery date"
+              }
+            }
+          }
+        ]
+      },
+      "HjelpemiddelUtlevert": {
+        "allOf": [
+          { "$ref": "#/components/schemas/BaseEvent" },
+          {
+            "type": "object",
+            "properties": {
+              "eventType": { "$ref": "#/components/schemas/EventType" },
+              "delivered": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Actual delivery datetime"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}
