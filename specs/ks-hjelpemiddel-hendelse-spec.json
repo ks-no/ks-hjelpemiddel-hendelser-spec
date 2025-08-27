@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Hendelser API",
-    "version": "1.0.5"
+    "version": "1.0.7"
   },
   "paths": {
     "/hendelser": {
@@ -32,14 +32,18 @@
                     "oneOf": [
                       { "$ref": "#/components/schemas/HjelpemiddelAnkommetLager" },
                       { "$ref": "#/components/schemas/HjelpemiddelPlanlagtUtlevert" },
-                      { "$ref": "#/components/schemas/HjelpemiddelUtlevert" }
+                      { "$ref": "#/components/schemas/HjelpemiddelUtlevert" },
+                      { "$ref": "#/components/schemas/HjelpemiddelKlarTilHenting" },
+                      { "$ref": "#/components/schemas/HjelpemiddelHentetAvKunde" }
                     ],
                     "discriminator": {
                       "propertyName": "eventType",
                       "mapping": {
                         "HjelpemiddelAnkommetLager": "#/components/schemas/HjelpemiddelAnkommetLager",
                         "HjelpemiddelPlanlagtUtlevert": "#/components/schemas/HjelpemiddelPlanlagtUtlevert",
-                        "HjelpemiddelUtlevert": "#/components/schemas/HjelpemiddelUtlevert"
+                        "HjelpemiddelUtlevert": "#/components/schemas/HjelpemiddelUtlevert",
+                        "HjelpemiddelKlarTilHenting": "#/components/schemas/HjelpemiddelKlarTilHenting",
+                        "HjelpemiddelHentetAvKunde": "#/components/schemas/HjelpemiddelHentetAvKunde"
                       }
                     }
                   }
@@ -58,7 +62,9 @@
         "enum": [
           "HjelpemiddelAnkommetLager",
           "HjelpemiddelPlanlagtUtlevert",
-          "HjelpemiddelUtlevert"
+          "HjelpemiddelUtlevert",
+          "HjelpemiddelKlarTilHenting",
+          "HjelpemiddelHentetAvKunde"
         ],
         "description": "The type of hendelse event"
       },
@@ -95,7 +101,6 @@
           {
             "type": "object",
             "properties": {
-              "eventType": { "$ref": "#/components/schemas/EventType" },
               "arrived": {
                 "type": "string",
                 "format": "date-time",
@@ -111,7 +116,6 @@
           {
             "type": "object",
             "properties": {
-              "eventType": { "$ref": "#/components/schemas/EventType" },
               "day": {
                 "type": "string",
                 "format": "date",
@@ -127,11 +131,34 @@
           {
             "type": "object",
             "properties": {
-              "eventType": { "$ref": "#/components/schemas/EventType" },
               "delivered": {
                 "type": "string",
                 "format": "date-time",
                 "description": "Actual delivery datetime"
+              }
+            }
+          }
+        ]
+      },
+      "HjelpemiddelKlarTilHenting": {
+        "allOf": [
+          { "$ref": "#/components/schemas/BaseEvent" },
+          {
+            "type": "object",
+            "description": "Event when hjelpemiddel is ready for pickup"
+          }
+        ]
+      },
+      "HjelpemiddelHentetAvKunde": {
+        "allOf": [
+          { "$ref": "#/components/schemas/BaseEvent" },
+          {
+            "type": "object",
+            "properties": {
+              "pickedUp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the hjelpemiddel was picked up by the customer"
               }
             }
           }
