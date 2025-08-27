@@ -30,7 +30,6 @@
                   "type": "array",
                   "items": {
                     "oneOf": [
-                      { "$ref": "#/components/schemas/HjelpeMiddelPaBil" },
                       { "$ref": "#/components/schemas/HjelpemiddelAnkommetLager" },
                       { "$ref": "#/components/schemas/HjelpemiddelPlanlagtUtlevert" },
                       { "$ref": "#/components/schemas/HjelpemiddelUtlevert" }
@@ -38,7 +37,6 @@
                     "discriminator": {
                       "propertyName": "eventType",
                       "mapping": {
-                        "HjelpeMiddelPaBil": "#/components/schemas/HjelpeMiddelPaBil",
                         "HjelpemiddelAnkommetLager": "#/components/schemas/HjelpemiddelAnkommetLager",
                         "HjelpemiddelPlanlagtUtlevert": "#/components/schemas/HjelpemiddelPlanlagtUtlevert",
                         "HjelpemiddelUtlevert": "#/components/schemas/HjelpemiddelUtlevert"
@@ -58,7 +56,6 @@
       "EventType": {
         "type": "string",
         "enum": [
-          "HjelpeMiddelPaBil",
           "HjelpemiddelAnkommetLager",
           "HjelpemiddelPlanlagtUtlevert",
           "HjelpemiddelUtlevert"
@@ -91,22 +88,6 @@
             "$ref": "#/components/schemas/EventType"
           }
         }
-      },
-      "HjelpeMiddelPaBil": {
-        "allOf": [
-          { "$ref": "#/components/schemas/BaseEvent" },
-          {
-            "type": "object",
-            "properties": {
-              "eventType": { "$ref": "#/components/schemas/EventType" },
-              "sent": {
-                "type": "string",
-                "format": "date-time",
-                "description": "When the hjelpemiddel was sent with car"
-              }
-            }
-          }
-        ]
       },
       "HjelpemiddelAnkommetLager": {
         "allOf": [
